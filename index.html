@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TrueTable — mock-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1B1F24;--muted:#4A5157;--body:#3A4046;--ground:#EEF0EC;--card:#FFFFFF;--line:#D5D9D3;--line2:#E6E9E4;--accent:#0B6B5C;--warn:#B45309}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#0B5A4D}
+.wrap{max-width:1320px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:28px}
+.num{font-variant-numeric:tabular-nums}
+nav{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:5;background:var(--ground);padding:12px 0}
+.tab{font:inherit;font-size:14px;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid #C9CEC7;background:var(--card);color:var(--ink);cursor:pointer}
+.tab:hover{border-color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,40px);line-height:1.1}
+.h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:24px}
+.h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:20px}
+.sub,.lbl{color:var(--muted)}.sub{font-size:15px}.lbl{font-size:13px}
+.banner{background:#FFF4D6;border:1px solid #E9C66A;color:#5C4300;border-radius:12px;padding:12px 16px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:16px}.row>.card{flex:1 1 480px;min-width:0}
+.card{background:var(--card);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.dark{background:var(--ink);color:#fff}.dark .lbl{color:#C9CEC7}
+.big{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700}
+.fact{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:12px;border:1px solid var(--line)}
+.fact b{font-weight:500;font-size:15px}
+.bar{display:flex;flex-direction:column;gap:6px}
+.bar .top{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.track{height:12px;background:var(--ground);border-radius:6px;overflow:hidden}
+.fill{height:12px;border-radius:6px}
+.chip{display:inline-block;align-self:flex-start;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.v-Keep{background:#D6EDE6;color:#0A4A3F}.v-Limit{background:#FCE7C8;color:#7A3E00}.v-Review{background:#DCE4F5;color:#1E3A78}.v-Grow{background:var(--ink);color:#fff}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid #C9CEC7}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.stats div div:last-child{font-size:20px;font-weight:600}
+.link{align-self:flex-start;font:inherit;font-weight:600;min-height:44px;background:none;border:0;padding:0;color:#0B5A4D;cursor:pointer;text-decoration:underline}
+p{margin:0;font-size:14px;line-height:1.55;color:var(--body)}
+ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.55}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{padding:12px 14px;text-align:left;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:14px;border-bottom:1px solid var(--line2);font-size:14px;vertical-align:top}
+.r{text-align:right}
+.foot{font-size:13px;color:var(--muted);line-height:1.6}.foot b{color:var(--ink)}
+.note{font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav role="tablist" aria-label="Pages" id="nav"></nav>
+<main id="page"></main>
+</div>
+<script>
+const ACC = '#0B6B5C', WARN = '#B45309', INK = '#1B1F24';
+const bar = (label, v, max, color) => ({ label, v, max, color });
+const r = (channel, mech, volume, cost, kept, drinks, back, verdict) => ({ channel, mech, volume, cost, kept, drinks, back, verdict });
+const rec = (verdict, title, body) => ({ verdict, title, body });
+const BANNER = 'Mock-up for discussion. Channel mix and offer terms are real (checked Oct 2026); every number is illustrative until we load Ai-Menu and platform exports.';
+
+const venues = {
+  hideaway: {
+    tab: 'Hideaway', name: 'Hideaway Kitchen & Bar', format: 'Asian fusion restaurant and cocktail bar, Broadbeach',
+    channels: ['First Table', 'Entertainment / NRMA', 'EatClub timed offers + Earn 5%', 'Uber Eats'],
+    rev: '$298k', cost: '$66.2k', back: '18%', verdict: 'Limit',
+    headline: 'Entertainment is discounting your cocktail list',
+    detail: 'First Table brings the best returning diners in the group. Entertainment keeps the least per cover: block Friday and Saturday.',
+    facts: [['Channels', 'First Table, Entertainment / NRMA, EatClub (timed offers + Earn 5%), Uber Eats'], ['Bookings', 'OpenTable, plus First Table'], ['POS and ordering', 'Ai-Menu: QR table ordering, loyalty members, card tabs'], ['Who we can recognise', 'High: bookings, members and tabs']],
+    kpis: [['Revenue through channels', '$298k', '24% of venue trade'], ['What the channels cost you', '$66.2k', '22% of channel revenue'], ['Deal diners back at full price', '18%', 'Best in the group'], ['Discount on trade you had anyway', '$9.1k', 'Mostly EatClub Earn at peak times']],
+    dineTitle: 'Dine-in: what you keep per cover', dineSub: 'Contribution after food cost and channel cost',
+    dine: [bar('Full price (no offer)', 41.20, 41.20, INK), bar('EatClub Earn 5% (outside offer times)', 38.70, 41.20, ACC), bar('EatClub timed offer (30% off, set slots)', 27.10, 41.20, ACC), bar('First Table (50% off food)', 24.60, 41.20, ACC), bar('Entertainment / NRMA (25% off bill)', 17.90, 41.20, WARN)],
+    del: [bar('Uber Eats', 6.10, 11.40, ACC)],
+    delNote: 'No direct pickup seen for Hideaway yet. Bine keeps $11.40 an order on its own pickup page.',
+    recs: [
+      rec('Limit', 'Block Entertainment on Friday and Saturday', '25% off the total bill (capped at $40) includes cocktails and wine. These tables order 0.8× the drinks of full-price tables, and the drinks they do order are discounted too. Steer them to Precinct beer on tap, which costs the group least to discount.'),
+      rec('Keep', 'First Table is your best deal channel', 'Food-only discount, diner pays the $6pp fee, drinks at full price. 22% of these diners came back at full price within 90 days.'),
+      rec('Review', 'EatClub: check the offer slots, and watch Earn 5%', 'Timed offers run only when you set them, such as Monday 6–9pm dine-in: make sure those slots are genuinely quiet. Earn 5% applies to every other EatClub card payment, and 71% of those were at peak times from returning cards.'),
+      rec('Review', 'Check Uber Eats promos and add direct pickup', 'Confirm whether any Uber Eats promos are venue-funded. If Ai-Menu pickup can be switched on, repeat delivery customers are worth moving to it.')],
+    rows: [
+      r('First Table', '50% off food; diner pays $6pp fee', '1,140', '$18.4k', '$24.60', '1.1×', '22%', 'Keep'),
+      r('Entertainment (incl. NRMA)', '25% off total bill, max $40, once a year', '410', '$12.7k', '$17.90', '0.8×', '9%', 'Limit'),
+      r('EatClub timed offers', 'Owner-set % off at chosen times (e.g. Mon 6–9pm, dine-in)', '520', '$5.6k', '$27.10', '1.0×', '15%', 'Keep'),
+      r('EatClub Earn 5%', 'Cashback on EatClub card payments outside offer times', '1,960', '$7.9k', '$38.70', '1.0×', 'Mostly regulars', 'Review'),
+      r('Uber Eats', 'Commission; promos unconfirmed', '2,300 orders', '$21.6k', '$6.10', '—', 'Hidden', 'Review')],
+    keptLabel: 'Kept per cover',
+    questions: 'Are any Uber Eats promos venue-funded? Can Ai-Menu export member IDs with each sale? Could Hideaway offer direct pickup like Bine?'
+  },
+  precinct: {
+    tab: 'Precinct', name: 'Precinct Brewing', format: 'Brewpub with kitchen, Miami',
+    channels: ['First Table', 'Entertainment', 'EatClub timed offers + Earn 5%', 'Uber Eats', 'DoorDash'],
+    rev: '$121k', cost: '$23.1k', back: '14%', verdict: 'Review',
+    headline: 'Two delivery apps, one is costing more',
+    detail: 'Entertainment works here because the beer is brewed on site. DoorDash keeps $1.50 less per order than Uber Eats.',
+    facts: [['Channels', 'First Table, Entertainment, EatClub (timed offers + Earn 5%), Uber Eats, DoorDash'], ['Bookings', 'Web form for groups of 8+, plus First Table'], ['POS and ordering', 'Ai-Menu: QR table ordering, loyalty members, card tabs'], ['Who we can recognise', 'Medium: First Table, members and tabs']],
+    kpis: [['Revenue through channels', '$121k', '19% of venue trade'], ['What the channels cost you', '$23.1k', '19% of channel revenue'], ['Deal diners back at full price', '14%', 'Where we can recognise them'], ['Discount on trade you had anyway', '$3.6k', 'EatClub Earn and peak-time Entertainment']],
+    dineTitle: 'Dine-in: what you keep per cover', dineSub: 'Contribution after food and beer cost and channel cost',
+    dine: [bar('Full price (no offer)', 32.50, 32.50, INK), bar('EatClub Earn 5% (outside offer times)', 30.90, 32.50, ACC), bar('EatClub timed offer (30% off, set slots)', 24.30, 32.50, ACC), bar('Entertainment (25% off bill)', 21.40, 32.50, ACC), bar('First Table (50% off food)', 19.80, 32.50, ACC)],
+    del: [bar('Uber Eats', 5.40, 11.40, ACC), bar('DoorDash', 3.90, 11.40, WARN)],
+    delNote: 'Same menu on two apps. Bine keeps $11.40 an order on its own pickup page.',
+    recs: [
+      rec('Keep', 'Entertainment works here', 'The 25% comes off beer you brew yourself, so it costs far less than at Hideaway or Bine. Entertainment keeps more per cover here than First Table. The same beer on tap at Hideaway and Bine is the cheapest drink to discount anywhere in the group.'),
+      rec('Review', 'Pick one delivery app, or price them differently', 'DoorDash keeps $1.50 less per order than Uber Eats. Check whether DoorDash brings new customers or the same people switching apps.'),
+      rec('Keep', 'First Table: keep, but watch the slots', 'Food-heavy tables at 50% off keep the least per cover, but 17% come back at full price. Keep it to genuinely quiet sittings.'),
+      rec('Review', 'EatClub: offers in quiet slots, Earn 5% on regulars', 'Timed offers bring new diners when they run in genuinely quiet slots. Outside those times, most Earn 5% payments come from repeat visitors on busy afternoons: cashback on trade you already had.')],
+    rows: [
+      r('First Table', '50% off food; diner pays $5pp fee', '260', '$3.1k', '$19.80', '1.2×', '17%', 'Keep'),
+      r('Entertainment', '25% off total bill (own-brewed beer)', '190', '$3.9k', '$21.40', '1.0×', '12%', 'Keep'),
+      r('EatClub timed offers', 'Owner-set % off at chosen times and days', '210', '$1.4k', '$24.30', '1.1×', '13%', 'Keep'),
+      r('EatClub Earn 5%', 'Cashback on EatClub card payments outside offer times', '640', '$1.9k', '$30.90', '1.0×', 'Mostly regulars', 'Review'),
+      r('Uber Eats', 'Commission; no promos seen', '880 orders', '$7.6k', '$5.40', '—', 'Hidden', 'Keep'),
+      r('DoorDash', 'Commission; promos unconfirmed', '520 orders', '$5.2k', '$3.90', '—', 'Hidden', 'Review')],
+    keptLabel: 'Kept per cover',
+    questions: 'Why both Uber Eats and DoorDash? Do group-booking form enquiries get recorded anywhere? Could Precinct offer direct pickup like Bine?'
+  },
+  bine: {
+    tab: 'Bine', name: 'Bine Bar & Dining', format: 'Craft beer bar with dining, Nobby Beach (walk-in)',
+    channels: ['Entertainment / NRMA', 'Uber Eats', 'Direct pickup'],
+    rev: '$67k', cost: '$9.6k', back: '9%', verdict: 'Grow',
+    headline: 'Leanest mix in the group, and the best takeaway margin',
+    detail: 'Direct pickup keeps $11.40 an order against $4.80 on Uber Eats. Grow it, and limit Entertainment on bought-in beer.',
+    facts: [['Channels', 'Entertainment (via NRMA), Uber Eats, direct pickup'], ['Bookings', 'None: walk-in'], ['POS and ordering', 'Ai-Menu: pickup ordering, loyalty members, card tabs'], ['Who we can recognise', 'Low: members and tabs only']],
+    kpis: [['Revenue through channels', '$67k', '14% of venue trade, lowest in the group'], ['What the channels cost you', '$9.6k', '14% of channel revenue'], ['Deal diners back at full price', '9%', 'Members and tabs only'], ['Direct pickup share of takeaway', '31%', 'The other 69% goes through Uber Eats']],
+    dineTitle: 'Dine-in and bar: what you keep per visit', dineSub: 'Contribution after food and drink cost and channel cost',
+    dine: [bar('Full price (no offer)', 28.40, 28.40, INK), bar('Entertainment / NRMA (25% off bill)', 13.20, 28.40, WARN)],
+    dineNote: 'No First Table or EatClub: Bine discounts far less than the other two venues.',
+    del: [bar('Direct pickup (own Ai-Menu page)', 11.40, 11.40, INK), bar('Uber Eats', 4.80, 11.40, ACC)],
+    delNote: 'The best takeaway margin in the group comes from Bine’s own pickup page.',
+    recs: [
+      rec('Grow', 'Push direct pickup', 'You keep $11.40 on a direct order against $4.80 on Uber Eats. A card in every Uber Eats bag pointing to direct ordering (with a small loyalty reward) could move repeat customers.'),
+      rec('Limit', 'Entertainment mostly discounts bought-in beer', '25% off the whole bill lands mostly on craft beer you buy in wholesale. It keeps less than half of a full-price visit: block it on busy afternoons and evenings, and point deal tables to the Precinct taps, which cost the group least to discount.'),
+      rec('Review', 'Use Uber Eats for reach, not repeat orders', 'Keep the listing for new customers, but track how many Uber Eats regulars could be ordering direct instead.'),
+      rec('Keep', 'Your lean mix is the group benchmark', 'No First Table or EatClub, by design: a bar earns its margin on drinks. Bine shows what the other venues look like with fewer discounts.')],
+    rows: [
+      r('Entertainment (via NRMA)', '25% off total bill (mostly bought-in craft beer, some Precinct taps)', '150', '$3.4k', '$13.20', '0.9×', '7%', 'Limit'),
+      r('Uber Eats', 'Commission; promos unconfirmed', '700 orders', '$5.9k', '$4.80', '—', 'Hidden', 'Review'),
+      r('Direct pickup (Ai-Menu)', 'No commission; own ordering page', '310 orders', '$0.3k', '$11.40', '—', '41%', 'Grow')],
+    keptLabel: 'Kept per visit',
+    questions: 'How much of Bine’s trade goes through loyalty members or tabs? Was staying off First Table and EatClub a deliberate choice? Is direct pickup promoted anywhere?'
+  }
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const money = v => '$' + v.toFixed(2);
+const bars = list => list.map(b => `<div class="bar"><div class="top"><span>${esc(b.label)}</span><span class="num"><b>${money(b.v)}</b></span></div><div class="track"><div class="fill" style="width:${Math.round(b.v / b.max * 100)}%;background:${b.color}"></div></div></div>`).join('');
+const chip = v => `<span class="chip v-${v}">${v}</span>`;
+const kpi = ([l, v, n], dark) => `<div class="card${dark ? ' dark' : ''}"><div class="lbl">${esc(l)}</div><div class="big num">${esc(v)}</div><div class="lbl">${esc(n)}</div></div>`;
+
+function summary() {
+  const cards = Object.entries(venues).map(([id, v]) => `
+    <div class="card" style="gap:14px">
+      <div><h3 class="h3">${esc(v.name)}</h3><div class="lbl">${esc(v.format)}</div></div>
+      <div class="pills">${v.channels.map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div>
+      <div class="stats num"><div><div class="lbl">Channel revenue</div><div>${v.rev}</div></div><div><div class="lbl">Cost</div><div>${v.cost}</div></div><div><div class="lbl">Back at full price</div><div>${v.back}</div></div></div>
+      ${chip(v.verdict)}
+      <div style="font-size:15px;font-weight:600">${esc(v.headline)}</div>
+      <p>${esc(v.detail)}</p>
+      <button class="link" data-go="${id}">Open ${esc(v.tab)} →</button>
+    </div>`).join('');
+  return `
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">TrueTable · Executive summary</div><h1>Three venues, three different channel stories</h1><div class="sub">Hideaway Kitchen &amp; Bar, Precinct Brewing, Bine Bar &amp; Dining · last 90 days</div></div>
+    <div class="banner">${BANNER}</div>
+    <div class="grid">${kpi(['Revenue through channels', '$486k', '21% of group trade'])}${kpi(['What the channels cost you', '$98.9k', '20% of channel revenue'])}${kpi(['Deal diners back at full price', '13%', 'Within 90 days, where we can recognise them'])}${kpi(["Discount paid on trade you'd likely get anyway", '$14.2k', 'Peak-time and regular-customer redemptions'], true)}</div>
+    <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">By venue</h2><div class="grid3">${cards}</div></section>
+    <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">Same platform, different result</h2>
+      <div class="row">
+        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:17px">Entertainment (incl. NRMA): kept per cover</h3><div class="lbl">25% off the whole bill costs least where more of the drinks are Precinct's own beer</div></div>${bars([bar('Precinct (mostly own-brewed beer)', 21.40, 21.40, ACC), bar('Hideaway (mostly cocktails and wine)', 17.90, 21.40, WARN), bar('Bine (mostly bought-in craft beer)', 13.20, 21.40, WARN)])}</div>
+        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:17px">Takeaway and delivery: kept per order</h3><div class="lbl">Bine's own pickup page against every delivery app in the group</div></div>${bars([bar('Bine · direct pickup', 11.40, 11.40, INK), bar('Hideaway · Uber Eats', 6.10, 11.40, ACC), bar('Precinct · Uber Eats', 5.40, 11.40, ACC), bar('Bine · Uber Eats', 4.80, 11.40, ACC), bar('Precinct · DoorDash', 3.90, 11.40, WARN)])}</div>
+      </div>
+    </section>
+    <div class="card" style="gap:14px"><h2 class="h2">Three moves for the group</h2><ol>
+      <li><b>Treat Entertainment differently at each venue, and lean on Precinct beer.</b> Keep it at Precinct; block peak nights at Hideaway and Bine, where most of the discount lands on bought-in wine, cocktails and craft beer. Precinct beer is on tap at all three venues and costs the group least to discount, so steer deal tables towards it.</li>
+      <li><b>Check EatClub's timing.</b> Timed owner offers (such as Monday 6–9pm, dine-in) should only run in genuinely quiet slots. The always-on Earn 5% outside those times is mostly cashback to regulars at peak times.</li>
+      <li><b>Move repeat delivery customers to direct ordering.</b> Bine already has it and keeps about twice as much per order; check whether Hideaway and Precinct can switch theirs on.</li>
+    </ol></div>
+    <div class="foot"><b>Where the numbers come from:</b> Ai-Menu POS exports for all three venues (itemised sales, loyalty members, named tabs), OpenTable at Hideaway, Uber Eats and DoorDash payout reports, and First Table, Entertainment and EatClub redemption reports.</div>
+  </div>`;
+}
+
+function venue(v) {
+  return `
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">TrueTable · Venue</div><h1>${esc(v.name)}</h1><div class="sub">${esc(v.format)} · last 90 days</div></div>
+    <div class="banner">${BANNER}</div>
+    <div class="grid">${v.facts.map(([l, x]) => `<div class="fact"><span class="lbl">${esc(l)}</span><b>${esc(x)}</b></div>`).join('')}</div>
+    <div class="grid">${v.kpis.map(k => kpi(k)).join('')}</div>
+    <div class="row">
+      <div class="card" style="gap:16px"><div><h2 class="h3">${esc(v.dineTitle)}</h2><div class="lbl">${esc(v.dineSub)}</div></div>${bars(v.dine)}${v.dineNote ? `<div class="lbl note">${esc(v.dineNote)}</div>` : ''}</div>
+      <div class="card" style="gap:16px"><div><h2 class="h3">Takeaway and delivery: what you keep per order</h2><div class="lbl">After commission, packaging and any venue-funded promos</div></div>${bars(v.del)}<div class="lbl note">${esc(v.delNote)}</div></div>
+    </div>
+    <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">What we'd tell you to do</h2>
+      <div class="grid3">${v.recs.map(x => `<div class="card">${chip(x.verdict)}<h3 style="margin:0;font-size:17px">${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join('')}</div>
+    </section>
+    <div class="card" style="gap:16px"><h2 class="h2">Every channel at this venue</h2><div class="scroll"><table>
+      <thead><tr><th>Channel</th><th>How it discounts</th><th class="r">Covers / orders</th><th class="r">Cost to you</th><th class="r">${v.keptLabel}</th><th class="r">Drinks vs full price</th><th class="r">Back at full price</th><th>Verdict</th></tr></thead>
+      <tbody>${v.rows.map(x => `<tr><td><b>${esc(x.channel)}</b></td><td style="color:var(--muted);max-width:260px">${esc(x.mech)}</td><td class="r num">${x.volume}</td><td class="r num">${x.cost}</td><td class="r num"><b>${x.kept}</b></td><td class="r num">${x.drinks}</td><td class="r num">${esc(x.back)}</td><td>${chip(x.verdict)}</td></tr>`).join('')}</tbody>
+    </table></div></div>
+    <div class="foot"><b>Questions to confirm with the venue:</b> ${esc(v.questions)}</div>
+  </div>`;
+}
+
+const pages = [['summary', 'Executive summary'], ['hideaway', 'Hideaway'], ['precinct', 'Precinct'], ['bine', 'Bine']];
+function show(id) {
+  if (!pages.some(p => p[0] === id)) id = 'summary';
+  document.getElementById('nav').innerHTML = pages.map(([p, l]) => `<button class="tab" role="tab" aria-selected="${p === id}" data-go="${p}">${l}</button>`).join('');
+  document.getElementById('page').innerHTML = id === 'summary' ? summary() : venue(venues[id]);
+  document.title = 'TrueTable — ' + pages.find(p => p[0] === id)[1];
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go]');
+  if (!t) return;
+  const id = t.dataset.go;
+  if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+  show(id); window.scrollTo(0, 0);
+});
+window.addEventListener('popstate', () => show(location.hash.slice(1)));
+show(location.hash.slice(1));
+</script>
+</body>
+</html>
