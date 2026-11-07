@@ -54,6 +54,7 @@ table{width:100%;border-collapse:collapse;min-width:900px}
 th{padding:12px 14px;text-align:left;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:14px;border-bottom:1px solid var(--line2);font-size:14px;vertical-align:top}
 .r{text-align:right}
+.total td{border-top:2px solid var(--ink);border-bottom:0;background:var(--ground);font-weight:600}
 .foot{font-size:13px;color:var(--muted);line-height:1.6}.foot b{color:var(--ink)}
 .note{font-style:italic}
 </style>
@@ -98,6 +99,7 @@ const venues = {
       r('EatClub Earn 5%', 'Cashback on EatClub card payments outside offer times', '1,960', '$7.9k', '$38.70', '1.0×', 'Mostly regulars', 'Review'),
       r('Uber Eats', 'Commission; promos unconfirmed', '2,300 orders', '$21.6k', '$6.10', '—', 'Hidden', 'Review')],
     keptLabel: 'Profit per cover',
+    total: ['4,030 covers · 2,300 orders', '$66.2k', '$31.10 / cover · $6.10 / order', '1.0×', '18%'],
     questions: 'Are any Uber Eats promos venue-funded? Can Ai-Menu export member IDs with each sale? Could Hideaway offer direct pickup like Bine?'
   },
   precinct: {
@@ -125,6 +127,7 @@ const venues = {
       r('Uber Eats', 'Commission; no promos seen', '880 orders', '$7.6k', '$5.40', '—', 'Hidden', 'Keep'),
       r('DoorDash', 'Commission; promos unconfirmed', '520 orders', '$5.2k', '$3.90', '—', 'Hidden', 'Review')],
     keptLabel: 'Profit per cover',
+    total: ['1,300 covers · 1,400 orders', '$23.1k', '$26.23 / cover · $4.84 / order', '1.1×', '14%'],
     questions: 'Why both Uber Eats and DoorDash? Do group-booking form enquiries get recorded anywhere? Could Precinct offer direct pickup like Bine?'
   },
   bine: {
@@ -150,6 +153,7 @@ const venues = {
       r('Uber Eats', 'Commission; promos unconfirmed', '700 orders', '$5.9k', '$4.80', '—', 'Hidden', 'Review'),
       r('Direct pickup (Ai-Menu)', 'No commission; own ordering page', '310 orders', '$0.3k', '$11.40', '—', '41%', 'Grow')],
     keptLabel: 'Profit per visit',
+    total: ['150 visits · 1,010 orders', '$9.6k', '$13.20 / visit · $6.83 / order', '0.9×', '7%'],
     questions: 'How much of Bine’s trade goes through loyalty members or tabs? Was staying off First Table and EatClub a deliberate choice? Is direct pickup promoted anywhere?'
   }
 };
@@ -209,6 +213,7 @@ function venue(v) {
     <div class="card" style="gap:16px"><h2 class="h2">Every channel at this venue</h2><div class="scroll"><table>
       <thead><tr><th>Channel</th><th>How it discounts</th><th class="r">Covers / orders</th><th class="r">Cost to you</th><th class="r">${v.keptLabel}</th><th class="r">Drinks vs full price</th><th class="r">Back at full price</th><th>Verdict</th></tr></thead>
       <tbody>${v.rows.map(x => `<tr><td><b>${esc(x.channel)}</b></td><td style="color:var(--muted);max-width:260px">${esc(x.mech)}</td><td class="r num">${x.volume}</td><td class="r num">${x.cost}</td><td class="r num"><b>${x.kept}</b></td><td class="r num">${x.drinks}</td><td class="r num">${esc(x.back)}</td><td>${chip(x.verdict)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr class="total"><td><b>Total / average</b></td><td style="color:var(--muted)">Averages weighted by covers and orders</td>${v.total.map((x, i) => `<td class="r num">${i === 2 ? `<b>${esc(x)}</b>` : esc(x)}</td>`).join('')}<td></td></tr></tfoot>
     </table></div></div>
     <div class="foot"><b>Questions to confirm with the venue:</b> ${esc(v.questions)}</div>
   </div>`;
