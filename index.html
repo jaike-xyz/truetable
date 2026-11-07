@@ -55,6 +55,20 @@ th{padding:12px 14px;text-align:left;font-size:12px;font-weight:600;color:var(--
 td{padding:14px;border-bottom:1px solid var(--line2);font-size:14px;vertical-align:top}
 .r{text-align:right}
 .total td{border-top:2px solid var(--ink);border-bottom:0;background:var(--ground);font-weight:600}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px}
+.slider{display:flex;flex-direction:column;gap:6px}
+.slider label{display:flex;justify-content:space-between;gap:12px;font-size:14px;font-weight:500}
+.slider output{font-weight:700;font-variant-numeric:tabular-nums}
+.slider input{width:100%;min-height:44px;accent-color:var(--warn)}
+.move{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line2)}
+.move:first-of-type{border-top:0}
+.move input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.move label{flex:1;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.move .t{font-weight:600;font-size:15px}
+.delta{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:16px}
+.up{color:var(--accent)}.down{color:#B4300E}.off{color:var(--muted);text-decoration:line-through}
+.vhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+
 .foot{font-size:13px;color:var(--muted);line-height:1.6}.foot b{color:var(--ink)}
 .note{font-style:italic}
 </style>
@@ -219,11 +233,95 @@ function venue(v) {
   </div>`;
 }
 
-const pages = [['summary', 'Executive summary'], ['hideaway', 'Hideaway'], ['precinct', 'Precinct'], ['bine', 'Bine']];
+
+const ASSUME = [
+  ['peak', 'Entertainment diners who come on peak nights', 45],
+  ['anyway', 'Of those, diners who still come at full price', 60],
+  ['keep', 'EatClub regulars who keep coming without the 5% cashback', 97],
+  ['direct', 'Delivery customers who move to direct pickup', 20],
+  ['switchDD', 'DoorDash customers who switch to Uber Eats', 75]
+];
+const A = Object.fromEntries(ASSUME.map(([k, , v]) => [k, v]));
+// Each move: change in profit over 90 days, from the sample numbers on the venue pages.
+const MOVES = {
+  hideaway: [
+    ['h-ent', 'Block Entertainment on Friday and Saturday', 'Peak-night Entertainment diners ($17.90 a cover) either pay full price ($41.20) or go elsewhere.', a => 410 * a.peak / 100 * (a.anyway / 100 * 41.20 - 17.90)],
+    ['h-earn', 'Switch off EatClub Earn 5% at peak times', '71% of the 1,960 Earn covers are regulars at peak times: they pay full price ($41.20 instead of $38.70), or some stop coming.', a => 1960 * 0.71 * (a.keep / 100 * 41.20 - 38.70)],
+    ['h-direct', 'Add direct pickup and move delivery regulars to it', 'Assumes Hideaway keeps what Bine does on direct orders: $11.40 against $6.10 on Uber Eats.', a => 2300 * a.direct / 100 * (11.40 - 6.10)]
+  ],
+  precinct: [
+    ['p-dd', 'Drop DoorDash, keep Uber Eats', 'DoorDash orders ($3.90 each) either move to Uber Eats ($5.40) or are lost.', a => 520 * (a.switchDD / 100 * 5.40 - 3.90)],
+    ['p-earn', 'Switch off EatClub Earn 5% at peak times', 'Assumes 71% of the 640 Earn covers are regulars at peak times: full price is $32.50 instead of $30.90.', a => 640 * 0.71 * (a.keep / 100 * 32.50 - 30.90)],
+    ['p-direct', 'Add direct pickup and move delivery regulars to it', 'Assumes Precinct keeps what Bine does on direct orders: $11.40 against $5.40 on Uber Eats.', a => 880 * a.direct / 100 * (11.40 - 5.40)]
+  ],
+  bine: [
+    ['b-direct', 'Push direct pickup', 'Uber Eats regulars ($4.80 an order) move to the pickup page ($11.40).', a => 700 * a.direct / 100 * (11.40 - 4.80)],
+    ['b-ent', 'Block Entertainment at peak times', 'Peak-time Entertainment visits ($13.20) either pay full price ($28.40) or go elsewhere.', a => 150 * a.peak / 100 * (a.anyway / 100 * 28.40 - 13.20)]
+  ]
+};
+const BASE = { hideaway: 4030 * 31.10 + 2300 * 6.10, precinct: 1300 * 26.23 + 1400 * 4.84, bine: 150 * 13.20 + 1010 * 6.83 };
+const ON = Object.fromEntries(Object.values(MOVES).flat().map(m => [m[0], true]));
+const signed = n => (n < 0 ? '−$' : '+$') + Math.abs(Math.round(n)).toLocaleString('en-AU');
+const signedK = n => (n < 0 ? '−$' : '+$') + (Math.abs(n) / 1000).toFixed(1) + 'k';
+
+function projection() {
+  const sliders = ASSUME.map(([k, label]) => `<div class="slider"><label for="a-${k}"><span>${esc(label)}</span><output id="o-${k}">${A[k]}%</output></label><input type="range" id="a-${k}" data-a="${k}" min="0" max="100" step="1" value="${A[k]}"></div>`).join('');
+  const venuesHtml = Object.entries(MOVES).map(([vid, moves]) => `
+    <div class="card" style="gap:4px">
+      <div class="vhead"><h3 class="h3">${esc(venues[vid].name)}</h3><div class="delta" id="vt-${vid}"></div></div>
+      ${moves.map(([id, title, how]) => `<div class="move"><input type="checkbox" id="m-${id}" data-m="${id}" ${ON[id] ? 'checked' : ''}><label for="m-${id}"><span class="t">${esc(title)}</span><span class="lbl">${esc(how)}</span></label><span class="delta" id="d-${id}"></span></div>`).join('')}
+    </div>`).join('');
+  return `
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">Projection</div><h1>What if you made the changes?</h1><div class="sub">Tick the moves you'd make and adjust the assumptions to see the estimated effect on profit from deal and delivery apps</div></div>
+    <div class="banner">${BANNER} The projection builds on those sample numbers, so treat it as a way to test ideas, not a forecast.</div>
+    <div class="grid">
+      <div class="card dark"><div class="lbl">Estimated extra profit, next 90 days</div><div class="big num" id="p-90"></div><div class="lbl">From the moves ticked below</div></div>
+      <div class="card"><div class="lbl">Estimated extra profit, per year</div><div class="big num" id="p-yr"></div><div class="lbl">90 days × 4</div></div>
+      <div class="card"><div class="lbl">Estimated lift on today's app profit</div><div class="big num" id="p-lift"></div><div class="lbl" id="p-base"></div></div>
+    </div>
+    <p style="font-size:15px;font-weight:500;color:var(--ink)">Estimated effect on profit. It doesn’t yet factor in seasonality, halo effects (such as deal diners who refer friends or leave reviews, or those who discover your venue/s on one app and then book directly instead) or where customers first discover a deal and/or your venue (e.g. ChatGPT, Google, Uber Eats).</p>
+    <div class="card" style="gap:18px"><div><h2 class="h2">Your assumptions</h2><div class="lbl">Drag to test what happens if diners react better or worse than expected</div></div><div class="sliders">${sliders}</div></div>
+    <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">The moves</h2><div class="grid3">${venuesHtml}</div></section>
+    <div class="foot"><b>How it's worked out:</b> profit is after food, drink and app costs, before wages and overheads, using each venue's sample numbers. Blocked deal diners who don't come at full price are counted as lost, not replaced by someone else, so the peak-night moves are on the cautious side. Peak-time share of EatClub Earn (71%) comes from the Hideaway sample and is used for Precinct too.</div>
+  </div>`;
+}
+function recalc() {
+  if (!document.getElementById('p-90')) return;
+  let total = 0;
+  for (const [vid, moves] of Object.entries(MOVES)) {
+    let vt = 0;
+    for (const [id, , , f] of moves) {
+      const d = f(A), el = document.getElementById('d-' + id);
+      el.textContent = signed(d);
+      el.className = 'delta ' + (!ON[id] ? 'off' : d < 0 ? 'down' : 'up');
+      if (ON[id]) vt += d;
+    }
+    const vel = document.getElementById('vt-' + vid);
+    vel.textContent = signed(vt); vel.className = 'delta ' + (vt < 0 ? 'down' : 'up');
+    total += vt;
+  }
+  const base = Object.values(BASE).reduce((x, y) => x + y, 0);
+  document.getElementById('p-90').textContent = signed(total);
+  document.getElementById('p-yr').textContent = signedK(total * 4);
+  document.getElementById('p-lift').textContent = (total < 0 ? '−' : '+') + Math.abs(total / base * 100).toFixed(1) + '%';
+  document.getElementById('p-base').textContent = 'On $' + Math.round(base / 1000) + 'k profit from apps over 90 days';
+}
+document.addEventListener('input', e => {
+  const k = e.target.dataset.a;
+  if (k) { A[k] = +e.target.value; document.getElementById('o-' + k).textContent = A[k] + '%'; recalc(); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.dataset.m;
+  if (id) { ON[id] = e.target.checked; recalc(); }
+});
+
+const pages = [['summary', 'Executive summary'], ['hideaway', 'Hideaway'], ['precinct', 'Precinct'], ['bine', 'Bine'], ['projection', 'Projection']];
 function show(id) {
   if (!pages.some(p => p[0] === id)) id = 'summary';
   document.getElementById('nav').innerHTML = pages.map(([p, l]) => `<button class="tab" role="tab" aria-selected="${p === id}" data-go="${p}">${l}</button>`).join('');
-  document.getElementById('page').innerHTML = id === 'summary' ? summary() : venue(venues[id]);
+  document.getElementById('page').innerHTML = id === 'summary' ? summary() : id === 'projection' ? projection() : venue(venues[id]);
+  recalc();
   document.title = 'TrueTable — ' + pages.find(p => p[0] === id)[1];
 }
 document.addEventListener('click', e => {
