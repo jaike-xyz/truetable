@@ -6,30 +6,32 @@
 <meta name="robots" content="noindex, nofollow">
 <title>TrueTable — mock-up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Shrikhand&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1B1F24;--muted:#4A5157;--body:#3A4046;--ground:#EEF0EC;--card:#FFFFFF;--line:#D5D9D3;--line2:#E6E9E4;--accent:#0B6B5C;--warn:#B45309}
+:root{--ink:#2A0F3D;--muted:#5B4A66;--body:#2A0F3D;--ground:#FFF4C9;--card:#FFFFFF;--line:#E3D6AE;--line2:#EFE5C4;--accent:#14573F;--warn:#FF4A1C;--butter:#FFCF33;--musk:#FFA9CF;--display:'Shrikhand',Georgia,serif}
 *{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif}
-a{color:#0B5A4D}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif}
+a{color:var(--accent)}
 .wrap{max-width:1320px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:28px}
 .num{font-variant-numeric:tabular-nums}
-nav{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:5;background:var(--ground);padding:12px 0}
-.tab{font:inherit;font-size:14px;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid #C9CEC7;background:var(--card);color:var(--ink);cursor:pointer}
-.tab:hover{border-color:var(--ink)}
-.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;position:sticky;top:0;z-index:5;background:var(--ground);padding:12px 0}
+.logo{display:inline-flex;align-items:center;gap:4px;min-height:44px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:30px;line-height:1}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+.tab{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:0 18px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.tab:hover{background:var(--butter)}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--butter);font-weight:600}
 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-h1{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,40px);line-height:1.1}
-.h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:24px}
-.h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:20px}
+h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(32px,5.5vw,48px);line-height:1.1}
+.h2{margin:0;font-family:var(--display);font-weight:400;font-size:30px}
+.h3{margin:0;font-family:var(--display);font-weight:400;font-size:24px}
 .sub,.lbl{color:var(--muted)}.sub{font-size:15px}.lbl{font-size:13px}
-.banner{background:#FFF4D6;border:1px solid #E9C66A;color:#5C4300;border-radius:12px;padding:12px 16px;font-size:14px}
+.banner{background:var(--butter);color:var(--ink);border-radius:12px;padding:12px 16px;font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .row{display:flex;flex-wrap:wrap;gap:16px}.row>.card{flex:1 1 480px;min-width:0}
-.card{background:var(--card);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px}
-.dark{background:var(--ink);color:#fff}.dark .lbl{color:#C9CEC7}
-.big{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700}
+.card{background:var(--card);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.dark{background:var(--ink);color:var(--butter)}.dark .lbl{color:var(--line)}
+.big{font-family:var(--display);font-size:38px;font-weight:400}
 .fact{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:12px;border:1px solid var(--line)}
 .fact b{font-weight:500;font-size:15px}
 .bar{display:flex;flex-direction:column;gap:6px}
@@ -37,12 +39,12 @@ h1{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,40px
 .track{height:12px;background:var(--ground);border-radius:6px;overflow:hidden}
 .fill{height:12px;border-radius:6px}
 .chip{display:inline-block;align-self:flex-start;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
-.v-Keep{background:#D6EDE6;color:#0A4A3F}.v-Limit{background:#FCE7C8;color:#7A3E00}.v-Review{background:#DCE4F5;color:#1E3A78}.v-Grow{background:var(--ink);color:#fff}
-.pill{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid #C9CEC7}
+.v-Keep{background:var(--accent);color:var(--butter)}.v-Limit{background:var(--warn);color:var(--ink)}.v-Review{background:var(--musk);color:var(--ink)}.v-Grow{background:var(--butter);color:var(--ink)}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
 .stats div div:last-child{font-size:20px;font-weight:600}
-.link{align-self:flex-start;font:inherit;font-weight:600;min-height:44px;background:none;border:0;padding:0;color:#0B5A4D;cursor:pointer;text-decoration:underline}
+.link{align-self:flex-start;font:inherit;font-weight:600;min-height:44px;background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline}
 p{margin:0;font-size:14px;line-height:1.55;color:var(--body)}
 ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.55}
 .scroll{overflow-x:auto}
@@ -56,11 +58,14 @@ td{padding:14px;border-bottom:1px solid var(--line2);font-size:14px;vertical-ali
 </head>
 <body>
 <div class="wrap">
+<div class="topbar">
+<a class="logo" href="#summary" data-go="summary" aria-label="TrueTable home"><svg width="46" height="46" viewBox="0 0 200 200" aria-hidden="true"><g transform="rotate(-6 100 100)"><circle cx="100" cy="37" r="10" fill="#FF4A1C"/><path d="M50 97a50 50 0 0 1 100 0z" fill="#FF4A1C"/><path d="M79 72l15 13 28-26" fill="none" stroke="#2A0F3D" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><rect x="20" y="96" width="160" height="24" rx="12" fill="#2A0F3D"/><path d="M88 118h24v22c0 12 10 18 26 20a8 8 0 0 1-1 16H63a8 8 0 0 1-1-16c16-2 26-8 26-20z" fill="#2A0F3D"/></g></svg>truetable</a>
 <nav role="tablist" aria-label="Pages" id="nav"></nav>
+</div>
 <main id="page"></main>
 </div>
 <script>
-const ACC = '#0B6B5C', WARN = '#B45309', INK = '#1B1F24';
+const ACC = '#14573F', WARN = '#FF4A1C', INK = '#2A0F3D';
 const bar = (label, v, max, color) => ({ label, v, max, color });
 const r = (channel, mech, volume, cost, kept, drinks, back, verdict) => ({ channel, mech, volume, cost, kept, drinks, back, verdict });
 const rec = (verdict, title, body) => ({ verdict, title, body });
@@ -172,8 +177,8 @@ function summary() {
     <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">By venue</h2><div class="grid3">${cards}</div></section>
     <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">Same platform, different result</h2>
       <div class="row">
-        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:17px">Entertainment (incl. NRMA): kept per cover</h3><div class="lbl">25% off the whole bill costs least where more of the drinks are Precinct's own beer</div></div>${bars([bar('Precinct (mostly own-brewed beer)', 21.40, 21.40, ACC), bar('Hideaway (mostly cocktails and wine)', 17.90, 21.40, WARN), bar('Bine (mostly bought-in craft beer)', 13.20, 21.40, WARN)])}</div>
-        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:17px">Takeaway and delivery: kept per order</h3><div class="lbl">Bine's own pickup page against every delivery app in the group</div></div>${bars([bar('Bine · direct pickup', 11.40, 11.40, INK), bar('Hideaway · Uber Eats', 6.10, 11.40, ACC), bar('Precinct · Uber Eats', 5.40, 11.40, ACC), bar('Bine · Uber Eats', 4.80, 11.40, ACC), bar('Precinct · DoorDash', 3.90, 11.40, WARN)])}</div>
+        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:20px">Entertainment (incl. NRMA): kept per cover</h3><div class="lbl">25% off the whole bill costs least where more of the drinks are Precinct's own beer</div></div>${bars([bar('Precinct (mostly own-brewed beer)', 21.40, 21.40, ACC), bar('Hideaway (mostly cocktails and wine)', 17.90, 21.40, WARN), bar('Bine (mostly bought-in craft beer)', 13.20, 21.40, WARN)])}</div>
+        <div class="card" style="gap:16px"><div><h3 class="h3" style="font-size:20px">Takeaway and delivery: kept per order</h3><div class="lbl">Bine's own pickup page against every delivery app in the group</div></div>${bars([bar('Bine · direct pickup', 11.40, 11.40, INK), bar('Hideaway · Uber Eats', 6.10, 11.40, ACC), bar('Precinct · Uber Eats', 5.40, 11.40, ACC), bar('Bine · Uber Eats', 4.80, 11.40, ACC), bar('Precinct · DoorDash', 3.90, 11.40, WARN)])}</div>
       </div>
     </section>
     <div class="card" style="gap:14px"><h2 class="h2">Three moves for the group</h2><ol>
@@ -217,6 +222,7 @@ function show(id) {
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go]');
   if (!t) return;
+  e.preventDefault();
   const id = t.dataset.go;
   if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
   show(id); window.scrollTo(0, 0);
