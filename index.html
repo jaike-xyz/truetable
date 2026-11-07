@@ -191,7 +191,7 @@ function summary() {
     </div>`).join('');
   return `
   <div style="display:flex;flex-direction:column;gap:28px">
-    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">Group Summary</div><h1>Three venues, three different stories</h1><div class="sub">Hideaway Kitchen &amp; Bar, Precinct Brewing, Bine Bar &amp; Dining · last 90 days</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><h1>Three venues, three different stories</h1><div class="sub">Hideaway Kitchen &amp; Bar, Precinct Brewing, Bine Bar &amp; Dining · last 90 days</div></div>
     <div class="banner">${BANNER}</div>
     <div class="grid">${kpi(['Sales from deal and delivery apps', '$486k', '21% of group trade'])}${kpi(['What the channels cost you', '$98.9k', '20.3% of app sales'])}${kpi(['Deal diners back at full price', '13%', 'Within 90 days, where we can recognise them'])}${kpi(["Discount paid on trade you'd likely get anyway", '$14.2k', 'Peak-time and regular-customer redemptions'], true)}</div>
     <section style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">By venue</h2><div class="grid3">${cards}</div></section>
@@ -213,7 +213,7 @@ function summary() {
 function venue(v) {
   return `
   <div style="display:flex;flex-direction:column;gap:28px">
-    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">TrueTable · Venue</div><h1>${esc(v.name)}</h1><div class="sub">${esc(v.format)} · last 90 days</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><h1>${esc(v.name)}</h1><div class="sub">${esc(v.format)} · last 90 days</div></div>
     <div class="banner">${BANNER}</div>
     <div class="grid">${v.facts.map(([l, x]) => `<div class="fact"><span class="lbl">${esc(l)}</span><b>${esc(x)}</b></div>`).join('')}</div>
     <div class="grid">${v.kpis.map(k => kpi(k)).join('')}</div>
@@ -273,7 +273,7 @@ function projection() {
     </div>`).join('');
   return `
   <div style="display:flex;flex-direction:column;gap:28px">
-    <div style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">Projection</div><h1>What if you made the changes?</h1><div class="sub">Tick the moves you'd make and adjust the assumptions to see the estimated effect on profit from deal and delivery apps</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><h1>What if you made the changes?</h1><div class="sub">Tick the moves you'd make and adjust the assumptions to see the estimated effect on profit from deal and delivery apps</div></div>
     <div class="banner">${BANNER} The projection builds on those sample numbers, so treat it as a way to test ideas, not a forecast.</div>
     <div class="grid">
       <div class="card dark"><div class="lbl">Estimated extra profit, next 90 days</div><div class="big num" id="p-90"></div><div class="lbl">From the moves ticked below</div></div>
@@ -316,7 +316,7 @@ document.addEventListener('change', e => {
   if (id) { ON[id] = e.target.checked; recalc(); }
 });
 
-const pages = [['summary', 'Executive summary'], ['hideaway', 'Hideaway'], ['precinct', 'Precinct'], ['bine', 'Bine'], ['projection', 'Projection']];
+const pages = [['summary', 'Group Summary'], ['hideaway', 'Hideaway'], ['precinct', 'Precinct'], ['bine', 'Bine'], ['projection', 'What If']];
 function show(id) {
   if (!pages.some(p => p[0] === id)) id = 'summary';
   document.getElementById('nav').innerHTML = pages.map(([p, l]) => `<button class="tab" role="tab" aria-selected="${p === id}" data-go="${p}">${l}</button>`).join('');
